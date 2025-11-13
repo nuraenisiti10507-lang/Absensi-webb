@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Absensi Siswa</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #e0e7ff, #c7d2fe);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      width: 95%;
+      max-width: 400px;
+    }
+    h2 {
+      text-align: center;
+      color: #1e40af;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+    button {
+      background: #4f46e5;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #4338ca;
+    }
+    #status {
+      margin-top: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Form Absensi Siswa</h2>
+    <input type="text" id="nama" placeholder="Nama" required>
+    <input type="text" id="nis" placeholder="NIS" required>
+    <select id="jenis_kelamin">
+      <option value="">Pilih Jenis Kelamin</option>
+      <option value="Laki-laki">Laki-laki</option>
+      <option value="Perempuan">Perempuan</option>
+    </select>
+    <input type="text" id="kelas" placeholder="Kelas" required>
+    <button onclick="kirimData()">Kirim</button>
+    <div id="status"></div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymFXBeYRD5y9jKl0zDjkkBWScqOnnQ-WXjm9l9YXNxUHb-CxuKWnPxIEu163VgRw1_/exec"; // 🔧 Ganti dengan URL Web App milikmu
+
+    async function kirimData() {
+      const nama = document.getElementById("nama").value;
+      const nis = document.getElementById("nis").value;
+      const jenis_kelamin = document.getElementById("jenis_kelamin").value;
+      const kelas = document.getElementById("kelas").value;
+      const statusEl = document.getElementById("status");
+
+      if (!nama || !nis || !jenis_kelamin || !kelas) {
+        alert("Semua field wajib diisi!");
+        return;
+      }
+
+      const formData = new URLSearchParams();
+      formData.append("nama", nama);
+      formData.append("nis", nis);
+      formData.append("jenis_kelamin", jenis_kelamin);
+      formData.append("kelas", kelas);
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: formData.toString(),
+        });
+
+        const text = await res.text();
+        alert(text); // 🔥 Pop up pesan hasil langsung
+
+        // Reset form
+        document.getElementById("nama").value = "";
+        document.getElementById("nis").value = "";
+        document.getElementById("jenis_kelamin").selectedIndex = 0;
+        document.getElementById("kelas").value = "";
+        statusEl.textContent = "Data berhasil dikirim!";
+        statusEl.style.color = "green";
+      } catch (err) {
+        alert("Gagal mengirim data: " + err.message);
+        statusEl.textContent = "Gagal mengirim data!";
+        statusEl.style.color = "red";
+      }
+    }
+  </script>
+</body>
+</html>
